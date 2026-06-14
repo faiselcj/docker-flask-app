@@ -1,7 +1,10 @@
-FROM python:3.11-slim
+FROM python:3.11 AS builder
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --target=/install -r requirements.txt
+
+FROM python:3.11-slim
+WORKDIR /app
+COPY --from=builder /install /usr/local/lib/python3.11/site-packages
 COPY app.py .
-EXPOSE 5000
 CMD ["python", "app.py"]
