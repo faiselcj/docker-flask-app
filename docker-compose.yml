@@ -5,29 +5,25 @@ services:
     build: .
     ports:
       - "5000:5000"
-    environment:
-      - APP_ENV=production
     depends_on:
-      - db
-      - cache
-    volumes:
-      - ./app.py:/app/app.py
+      - mysql
 
-  db:
-    image: postgres:15
+  mysql:
+    image: mysql:8
     environment:
-      - POSTGRES_DB=appdb
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=pass
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: appdb
+    ports:
+      - "3306:3306"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+      - mysql_data:/var/lib/mysql
 
-  cache:
-    image: redis:7-alpine
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
     ports:
-      - "6379:6379"
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
 
 volumes:
-  pgdata:
+  mysql_data:
